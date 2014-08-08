@@ -55,7 +55,7 @@ class FilterAdd extends AbstractAddStepHandler {
         final PathAddress address = PathAddress.pathAddress(operation.get(OP_ADDR));
         final String name = address.getLastElement().getValue();
 
-        final FilterService service = new FilterService(handler, getResolvedModel(context, model));
+        final FilterService service = new FilterService(handler, context, getResolvedModel(context, model));
         final ServiceTarget target = context.getServiceTarget();
         ServiceController<?> sc = target.addService(UndertowService.FILTER.append(name), service)
                 .setInitialMode(ServiceController.Mode.ON_DEMAND)

@@ -44,7 +44,8 @@ public class FilterDefinitions extends PersistentResourceDefinition {
             BasicAuthHandler.INSTANCE,
             ConnectionLimitHandler.INSTANCE,
             ResponseHeaderFilter.INSTANCE,
-            GzipFilter.INSTANCE
+            GzipFilter.INSTANCE,
+            CustomFilter.INSTANCE
     ));
 
     private FilterDefinitions() {

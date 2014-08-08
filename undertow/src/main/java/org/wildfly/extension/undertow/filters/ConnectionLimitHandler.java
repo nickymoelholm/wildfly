@@ -22,13 +22,16 @@
 
 package org.wildfly.extension.undertow.filters;
 
+import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.RequestLimitingHandler;
+
 import java.util.Arrays;
 import java.util.Collection;
 
-import io.undertow.server.HttpHandler;
-import io.undertow.server.handlers.RequestLimitingHandler;
 import org.jboss.as.controller.AttributeDefinition;
+import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
+import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
 
 /**
@@ -65,7 +68,7 @@ public class ConnectionLimitHandler extends Filter {
 
 
     @Override
-    public Class<? extends HttpHandler> getHandlerClass() {
+    public Class<? extends HttpHandler> getHandlerClass(OperationContext context, ModelNode model) {
         return RequestLimitingHandler.class;
     }
 }

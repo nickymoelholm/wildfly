@@ -24,6 +24,8 @@ package org.wildfly.extension.undertow.filters;
 
 import io.undertow.predicate.Predicate;
 import io.undertow.server.HttpHandler;
+
+import org.jboss.as.controller.OperationContext;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
@@ -37,9 +39,11 @@ import org.wildfly.extension.undertow.Handler;
 public class FilterService implements Service<FilterService> {
     private final Handler handler;
     private final ModelNode model;
+    private OperationContext context;
 
-    FilterService(Handler handler, ModelNode model) {
+    FilterService(Handler handler, OperationContext context, ModelNode model) {
         this.handler = handler;
+        this.context = context;
         this.model = model;
     }
 
@@ -53,8 +57,8 @@ public class FilterService implements Service<FilterService> {
 
     }
 
-    public HttpHandler createHttpHandler(final Predicate predicate, HttpHandler next) {
-        return handler.createHttpHandler(predicate, model, next);
+    public HttpHandler createHttpHandler(Predicate predicate, HttpHandler next) {
+        return handler.createHttpHandler(predicate, context, model, next);
     }
 
     @Override

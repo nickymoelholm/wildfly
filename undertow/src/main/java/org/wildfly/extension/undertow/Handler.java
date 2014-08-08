@@ -22,11 +22,14 @@
 
 package org.wildfly.extension.undertow;
 
-import java.util.Collection;
-
 import io.undertow.predicate.Predicate;
 import io.undertow.server.HttpHandler;
+
+import java.util.Collection;
+
 import org.jboss.as.controller.AttributeDefinition;
+import org.jboss.as.controller.OperationContext;
+import org.jboss.as.controller.OperationFailedException;
 import org.jboss.dmr.ModelNode;
 
 /**
@@ -37,8 +40,8 @@ public interface Handler {
 
     String getXmlElementName();
 
-    Class<? extends HttpHandler> getHandlerClass();
+    Class<? extends HttpHandler> getHandlerClass(OperationContext context, ModelNode model) throws OperationFailedException;
 
-    HttpHandler createHttpHandler(final Predicate predicate, final ModelNode model, final HttpHandler next);
+    HttpHandler createHttpHandler(Predicate predicate, OperationContext context, ModelNode model, HttpHandler next);
 
 }

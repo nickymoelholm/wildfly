@@ -27,6 +27,7 @@ package org.wildfly.extension.undertow;
 import static org.jboss.as.controller.PersistentResourceXMLDescription.builder;
 
 import java.util.List;
+
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 
@@ -42,10 +43,12 @@ import org.jboss.staxmapper.XMLExtendedStreamWriter;
 import org.wildfly.extension.undertow.errorhandler.ErrorPageDefinition;
 import org.wildfly.extension.undertow.filters.BasicAuthHandler;
 import org.wildfly.extension.undertow.filters.ConnectionLimitHandler;
+import org.wildfly.extension.undertow.filters.CustomFilter;
 import org.wildfly.extension.undertow.filters.FilterDefinitions;
 import org.wildfly.extension.undertow.filters.FilterRefDefinition;
 import org.wildfly.extension.undertow.filters.GzipFilter;
 import org.wildfly.extension.undertow.filters.ResponseHeaderFilter;
+import org.wildfly.extension.undertow.handlers.CustomHandler;
 import org.wildfly.extension.undertow.handlers.FileHandler;
 import org.wildfly.extension.undertow.handlers.HandlerDefinitions;
 import org.wildfly.extension.undertow.handlers.ReverseProxyHandler;
@@ -183,7 +186,12 @@ public class UndertowSubsystemParser_1_1 implements XMLStreamConstants, XMLEleme
                                                         .setXmlElementName(Constants.HOST)
                                                 .addAttributes(ReverseProxyHandlerHost.INSTANCE_ID))
                                 )
-
+                                .addChild(
+                                        builder(CustomHandler.INSTANCE)
+                                                .addAttributes(
+                                                        CustomHandler.CLASS,
+                                                        CustomHandler.MODULE)
+                                )
 
                 )
                 .addChild(
@@ -203,7 +211,10 @@ public class UndertowSubsystemParser_1_1 implements XMLStreamConstants, XMLEleme
                                 ).addChild(
                                         builder(GzipFilter.INSTANCE)
                                                 .addAttributes(GzipFilter.INSTANCE.getAttributes())
-                                )
+                                ).addChild(
+                                        builder(CustomFilter.INSTANCE)
+                                        .addAttributes(CustomFilter.INSTANCE.getAttributes())
+                        )
 
                 )
                 //todo why do we really need this?

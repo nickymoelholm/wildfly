@@ -23,46 +23,53 @@
 package org.wildfly.extension.undertow.filters;
 
 import io.undertow.server.HttpHandler;
-import io.undertow.server.handlers.SetHeaderHandler;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.jboss.as.controller.AttributeDefinition;
 import org.jboss.as.controller.OperationContext;
+import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
+import org.jboss.modules.Module;
+import org.jboss.modules.ModuleIdentifier;
 
 /**
- * @author <a href="mailto:tomaz.cerar@redhat.com">Tomaz Cerar</a> (c) 2013 Red Hat Inc.
+ * @author <a href="mailto:moelholm@gmail.com">Nicky Moelholm</a>
  */
-public class ResponseHeaderFilter extends Filter {
+public class CustomFilter extends Filter {
 
-    private static final AttributeDefinition NAME = new SimpleAttributeDefinitionBuilder("header-name", ModelType.STRING)
-            .setAllowNull(false)
-            .setAllowExpression(true)
-            .build();
-    private static final AttributeDefinition VALUE = new SimpleAttributeDefinitionBuilder("header-value", ModelType.STRING)
-            .setAllowNull(false)
-            .setAllowExpression(true)
-            .build();
+    public static final CustomFilter INSTANCE = new CustomFilter();
 
-    public static final ResponseHeaderFilter INSTANCE = new ResponseHeaderFilter();
+    private static final AttributeDefinition CLASS = new SimpleAttributeDefinitionBuilder("class", ModelType.STRING)
+            .setAllowNull(false).setAllowExpression(true).build();
 
-    private ResponseHeaderFilter() {
-        super("response-header");
+    private static final AttributeDefinition MODULE = new SimpleAttributeDefinitionBuilder("module", ModelType.STRING)
+            .setAllowNull(false).setAllowExpression(true).build();
+
+    private CustomFilter() {
+        super("custom");
     }
 
     @Override
     public Collection<AttributeDefinition> getAttributes() {
-        return Arrays.asList(NAME, VALUE);
+        return Arrays.asList(CLASS, MODULE);
     }
 
     @Override
-    public Class<? extends HttpHandler> getHandlerClass(OperationContext context, ModelNode model) {
-        return SetHeaderHandler.class;
+    public Class<? extends HttpHandler> getHandlerClass(OperationContext context, ModelNode model) throws OperationFailedException {
+        String className = CLASS.resolveModelAttribute(context, model).asString();
+        String moduleName = MODULE.resolveModelAttribute(context, model).asString();
+        try {
+            ModuleIdentifier moduleId = ModuleIdentifier.create(moduleName);
+            Module module = Module.getCallerModuleLoader().loadModule(moduleId);
+            return  module.getClassLoader().loadClass(className)
+                    .asSubclass(HttpHandler.class);
+        } catch (Exception e) {
+            throw new OperationFailedException(e, model);
+        }
     }
-
 
 }

@@ -22,14 +22,16 @@
 
 package org.wildfly.extension.undertow.errorhandler;
 
+import io.undertow.predicate.Predicate;
+import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.error.FileErrorPageHandler;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import io.undertow.predicate.Predicate;
-import io.undertow.server.HttpHandler;
-import io.undertow.server.handlers.error.FileErrorPageHandler;
 import org.jboss.as.controller.AttributeDefinition;
+import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
@@ -62,12 +64,12 @@ public class ErrorPageDefinition extends AbstractHandlerDefinition {
     }
 
     @Override
-    public Class<? extends HttpHandler> getHandlerClass() {
+    public Class<? extends HttpHandler> getHandlerClass(OperationContext context, ModelNode model) {
         return FileErrorPageHandler.class;
     }
 
     @Override
-    public HttpHandler createHttpHandler(Predicate predicate, ModelNode model, HttpHandler next) {
+    public HttpHandler createHttpHandler(Predicate predicate, OperationContext context, ModelNode model, HttpHandler next) {
         throw new IllegalStateException("not implemented!");
     }
 }

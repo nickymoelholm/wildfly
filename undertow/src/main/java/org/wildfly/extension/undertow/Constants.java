@@ -139,4 +139,9 @@ public interface Constants {
     String CERTIFICATE_FORWARDING = "certificate-forwarding";
     String OPTIONS = "options";
     String IGNORE_FLUSH = "ignore-flush";
+
+    //Custom handler config
+    String CUSTOM = "custom";
+    String CLASS = "class";
+    String MODULE = "module";
 }

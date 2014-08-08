@@ -22,13 +22,16 @@
 
 package org.wildfly.extension.undertow.filters;
 
+import io.undertow.security.handlers.AuthenticationCallHandler;
+import io.undertow.server.HttpHandler;
+
 import java.util.Collection;
 import java.util.Collections;
 
-import io.undertow.security.handlers.AuthenticationCallHandler;
-import io.undertow.server.HttpHandler;
 import org.jboss.as.controller.AttributeDefinition;
+import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
+import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
 
 /**
@@ -52,7 +55,7 @@ public class BasicAuthHandler extends Filter {
     }
 
     @Override
-    public Class<? extends HttpHandler> getHandlerClass() {
+    public Class<? extends HttpHandler> getHandlerClass(OperationContext context, ModelNode model) {
         return AuthenticationCallHandler.class;
     }
 

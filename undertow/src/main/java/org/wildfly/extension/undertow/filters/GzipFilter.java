@@ -30,6 +30,8 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
 import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
+
+import org.jboss.as.controller.OperationContext;
 import org.jboss.dmr.ModelNode;
 
 /**
@@ -45,12 +47,12 @@ public class GzipFilter extends Filter {
     }
 
     @Override
-    public Class<? extends HttpHandler> getHandlerClass() {
+    public Class<? extends HttpHandler> getHandlerClass(OperationContext context, ModelNode model) {
         return null;
     }
 
     @Override
-    public HttpHandler createHttpHandler(final Predicate predicate, ModelNode model, HttpHandler next) {
+    public HttpHandler createHttpHandler(Predicate predicate, OperationContext context, ModelNode model, HttpHandler next) {
         EncodingHandler encodingHandler = new EncodingHandler(new ContentEncodingRepository()
                 .addEncodingHandler("gzip", new GzipEncodingProvider(), 50, predicate!=null?predicate : Predicates.truePredicate()));
         encodingHandler.setNext(next);

@@ -26,11 +26,11 @@ import static org.jboss.logging.Logger.Level.ERROR;
 import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.TRACE;
 import static org.jboss.logging.Logger.Level.WARN;
+import io.undertow.server.HttpHandler;
 
 import java.io.File;
 import java.net.InetSocketAddress;
 
-import io.undertow.server.HttpHandler;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.logging.BasicLogger;
 import org.jboss.logging.Logger;
@@ -174,4 +174,8 @@ public interface UndertowLogger extends BasicLogger {
     @LogMessage(level = ERROR)
     @Message(id = 17539, value = "Error obtaining authorization helper")
     void noAuthorizationHelper(@Cause Exception e);
+
+    @LogMessage(level = INFO)
+    @Message(id = 17540, value = "Creating custom handler of class %s from module %s")
+    void creatingCustomHandler(String clazz, String module);
 }

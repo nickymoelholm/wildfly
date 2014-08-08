@@ -22,14 +22,16 @@
 
 package org.wildfly.extension.undertow.filters;
 
+import io.undertow.Handlers;
+import io.undertow.predicate.Predicate;
+import io.undertow.server.HttpHandler;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.undertow.Handlers;
-import io.undertow.predicate.Predicate;
-import io.undertow.server.HttpHandler;
 import org.jboss.as.controller.AttributeDefinition;
+import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.ReloadRequiredRemoveStepHandler;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.as.controller.registry.OperationEntry;
@@ -63,18 +65,19 @@ abstract class Filter extends AbstractHandlerDefinition {
         return name;
     }
 
-    public HttpHandler createHttpHandler(final Predicate predicate, final ModelNode model, HttpHandler next) {
-        Class<? extends HttpHandler> handlerClass = getHandlerClass();
-        List<AttributeDefinition> attributes = new ArrayList<>(getAttributes());
-        int numOfParams = attributes.size() + 1;
+    public HttpHandler createHttpHandler(Predicate predicate, OperationContext context, ModelNode model, HttpHandler next) {
+        Class<? extends HttpHandler> handlerClass = null;
         try {
+            handlerClass = getHandlerClass(context, model);
+            List<AttributeDefinition> attributes = new ArrayList<>(getAttributes());
+            int numOfParams = attributes.size() + 1;
             for (Constructor<?> c : handlerClass.getDeclaredConstructors()) {
                 if (c.getParameterTypes().length == numOfParams) {
                     Object[] params = new Object[numOfParams];
-                    Class[] parameterTypes = c.getParameterTypes();
+                    Class<?>[] parameterTypes = c.getParameterTypes();
                     int attrCounter = 0;
                     for (int i = 0; i < parameterTypes.length; i++) {
-                        Class param = parameterTypes[i];
+                        Class<?> param = parameterTypes[i];
                         if (param == String.class) {
                             params[i] = model.get(attributes.get(attrCounter).getName()).asString();
                             attrCounter++;
